@@ -1,0 +1,43 @@
+tasks:
+  showrss:
+    exists_series: /NAS/TV Shows/
+    rss: http://showrss.info/user/78625.rss?magnets=true&namespaces=true&name=null&quality=null&re=null
+#    rss: http://showrss.info/user/78625.rss?magnets=true&namespaces=true&name=null&quality=null&re=null
+    all_series: yes
+    transmission:
+      host: localhost
+      port: 9091
+      username: marcel
+      password: ms1982
+      path: /NAS/TV Shows/{{series_name}}/Season {{series_season}}
+      addpaused: no
+#  sort-series:
+#    find:
+#      path: /NAS/Downloads/
+#      regexp: '.*\.(avi|mkv|mp4)$'
+#      recursive: yes
+#    seen: local
+#    # Ignore samples
+#    regexp:
+#      reject: 
+#        - sample
+#    # With the require_field and accept_all plugins, we accept anything that the series plugin has successfully parsed.
+#    require_field: series_name
+#    accept_all: yes
+#    move:
+#      to: /NAS/TV Shows/{{series_name}}/Season {{series_season}}
+#  sort-movies:
+#    filesystem:
+#      path: /NAS/Downloads/
+#      regexp: '.*\.(mkv|mp4|avi)$'
+#      recursive: yes
+##    template: movies
+#    require_field: imdb_name
+#    accept_all: yes
+#    regexp:
+#      reject:
+#        - sample  
+#    move:
+#      to: /NAS/Movies/
+#      rename: '{{imdb_name}} ({{imdb_year}})'
+      
