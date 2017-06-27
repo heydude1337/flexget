@@ -1,12 +1,13 @@
 variables: variables.yml
 
 templates:
-  torrent:
+  torrent_tvshows:
     transmission:
       host: "{? trans.adress ?}"
       port: 9091
-      username: "{? trans.username ?}"
-      password: "{? trans.password ?}"
+      username: '{? trans.username ?}'
+      password: '{? trans.password ?}'
+      path: '{? folder.shows ?}/{{series_name}}/Season {{series_season}}'
     clean_transmission:
       host: "{? trans.adress ?}"
       port: 9091
@@ -14,49 +15,21 @@ templates:
       password: "{? trans.password ?}"
       finished_for: 2 days
       delete_files: no
-  
-  movie_rename:
-    move:
-      to: '{? folder.film ?}/{{ imdb_name }} ({{ imdb_year }})/'
-      rename: '{{ imdb_name }} ({{ imdb_year }})'
-      clean_source: 20
-      along:
-        extensions:
-          - sub
-          - srt  
-        subdirs:
-          - Subs
-          
-  series_rename:
-    move:
-      to: '{? folder.show ?}/{{ series_name }}/Season {{ series_season }}/'
-      rename: '{{ series_name }}.{{ series_id }}'
-      clean_source: 20
-      along:
-       extensions:
-          - sub
-          - srt
-       subdirs:
-          - Subs
-          
-  search_downloads:      
-    filesystem:
-      # directory with the files to be sorted
-      path: "{? folder.downloads ?}"
-      recursive: yes
-      # fetch all avi, mkv and mp4 files, skips the .part files (unfinished torrents)
-      regexp: '.*\.(avi|mkv|mp4)$'
-    regexp:
-      reject:
-        - sample
+  torrent_movies:
+    transmission:
+      host: "{? trans.adress ?}"
+      port: 9091
+      username: "{? trans.username ?}"
+      password: "{? trans.password ?}"
+      path: "{? folder.movies ?}"
       
 tasks:
-  showrss:
+  show-rss:
     priority: 1
     rss: "{? urls.rssfeed ?}"
     accept_all: yes
-    exists_series: "{?  folder.series  ?}"
-    template: torrent
+    exists_series: "{?  folder.tvshows  ?}"
+    template: torrent_tvshows
     
   # movies from imdb
   imdb-lookup:
@@ -85,52 +58,23 @@ tasks:
       interval: 4 hours
     content_size:
       min: 3000
-      max: 10000
-    quality: 1080p+ !cam !2160
+      max: 12000
+    quality: 1080p+ !cam !2160p
     list_match:
       from:
         - movie_list: imdb_movies
-    template: torrent
-
-  # movies sorting task,always second to last
-  sort-movies:
-    priority: 98
-    template: 
-      - search_downloads
-      - movies_rename
-    seen: local
-    exists: "{? folder.movies ?}"
-    accept_all: yes
-    imdb_lookup: yes
-    require_field: imdb_name
+    template: torrent_movies
     
-  # shows sorting task, always last
-  sort-shows:
-    priority: 99
-    template: 
-      - search_downloads
-      - series_rename
-    configure_series:
-      settings:
-        parse_only: yes
-      from:
-        rss: "{? urls.rssfeed ?}"
-    metainfo_series: yes
-    seen: local
-    exists: "{? folder.show ?}"
-    
-    # this is needed for the episode names
-    thetvdb_lookup: yes
-    require_field: series_name
-    accept_all: yes
-    
-
 schedules:
   # Run every task once an hour
-  - tasks: [showrss, sort-shows]
+  - tasks:
+      - show-rss
+      - movies-rss
     schedule:
       minute: 30
-  - tasks: [imdb-lookup, movies-rss, sort-movies]
+  - tasks:
+      - imdb-lookup
     interval: 
       hours: 2
+
 

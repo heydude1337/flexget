@@ -1,14 +1,14 @@
 trans:
-  username: marcel
-  password: ms1982
+  username: *
+  password: *
   adress: 192.168.0.5
   port: 9091
 imdb:
-  username: ur77165354
+  username: *
   userlist: watchlist
 urls:
   rssfeed: http://showrss.info/user/78625.rss?magnets=true&namespaces=true&name=null&quality=null&re=null
 folder:
   downloads: /NAS/Downloads
-  tvshows: /NAS/TV\ Shows
+  tvshows: /NAS/TV Shows
   movies: /NAS/Movies
