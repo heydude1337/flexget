@@ -2,6 +2,12 @@ variables: variables.yml
 
 
 templates:
+  message:
+    notify:
+      entries:
+        via:
+          - pushbullet:
+              api_key: o.lP8dfxQxlnqGzCU1Uoh7lMHMRYGSzbXl
   torrent:
     transmission:
       host: "{? trans.adress ?}"
@@ -83,6 +89,7 @@ tasks:
     template:
       - movies
       - torrent
+      - message
   clean:
     priority: 99
     disable: details
@@ -94,6 +101,7 @@ tasks:
     template:
       - showrss
       - torrent
+      - message
 
 schedules:
   - tasks:
