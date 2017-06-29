@@ -1,13 +1,15 @@
 variables: variables.yml
 
+
 templates:
-  torrent_tvshows:
+  torrent:
     transmission:
       host: "{? trans.adress ?}"
-      port: 9091
+      port: 9091 # "{? trans.port ?}}"
       username: '{? trans.username ?}'
       password: '{? trans.password ?}'
-      path: '{? folder.shows ?}/{{series_name}}/Season {{series_season}}'
+
+  clean_torrent:
     clean_transmission:
       host: "{? trans.adress ?}"
       port: 9091
@@ -15,66 +17,94 @@ templates:
       password: "{? trans.password ?}"
       finished_for: 2 days
       delete_files: no
-  torrent_movies:
-    transmission:
-      host: "{? trans.adress ?}"
-      port: 9091
-      username: "{? trans.username ?}"
-      password: "{? trans.password ?}"
-      path: "{? folder.movies ?}"
-      
-tasks:
-  show-rss:
-    priority: 1
+
+  showrss:
     rss: "{? urls.rssfeed ?}"
     accept_all: yes
+    # thetvdb_lookup: yes
+    set:
+      path: "{{ series_name }}/{{ series_season|pad(2) }}"
     exists_series: "{?  folder.tvshows  ?}"
-    template: torrent_tvshows
-    
-  # movies from imdb
+    metainfo_series: yes
+
   imdb-lookup:
-    priority: 10
-    list_clear:
-      what: 
-        - movie_list: imdb_movies
     imdb_watchlist:
       user_id: "{? imdb.username ?}"
       list: "{? imdb.userlist ?}"
     accept_all: yes
-    exists:  "{?  folder.movies  ?}"
+    exists_movie:  "{?  folder.movies  ?}"
     list_add:
       - movie_list: imdb_movies
-      
-  # download movies
-  movies-rss:
-    priority: 11
+
+  movies:
+    metainfo_movie: yes
     discover:
       what:
         - movie_list: imdb_movies
       from:
         - rarbg:
-            category: [44] # 44 = 720p, 45 = 1080p
+            category: "{? movies.rarbg_category ?}" 
             sorted_by: seeders
       interval: 4 hours
     content_size:
-      min: 3000
-      max: 12000
-    quality: 1080p+ !cam !2160p
+      min: 2500 # "{? movies.min_size ?}"
+      max: 12000 # "{? movies.max_size ?}"
+    quality: "{? movies.quality ?}"
     list_match:
       from:
         - movie_list: imdb_movies
-    template: torrent_movies
-    
+      remove_on_match: yes  # remove from list when entries are accepted
+    set:
+      path: "{? folder.movies ?}/{{ movie_name }}/"
+      content_filename: "{{ movie_name }} ({{ movie_year }}) - {{ quality|upper }}"
+  
+  movie_releases:  
+    inputs:
+      - rss: "{? urls.imdb_releases ?}" # new movie releases and  
+    imdb_lookup: yes
+    imdb:  
+      min_score: 6.2 # "{? imdb.min_rating ?}"
+      min_votes: 1000 # "{? imdb.min_votes ?}"
+    list_add:
+      - movie_list: imdb_movies
+    exists_movie:  "{?  folder.movies  ?}"
+
+tasks:
+  imdb_watch_list:
+    priority: 1
+    template: imdb-lookup
+  
+  add_releases: 
+    priority: 2 
+    template: movie_releases
+
+  download_movie_list:
+    priority: 3
+    template:
+      - movies
+      - torrent
+  clean:
+    priority: 99
+    disable: details
+    template:
+      - clean_torrent
+
+  download_series:
+    priority: 10
+    template:
+      - showrss
+      - torrent
+
 schedules:
-  # Run every task once an hour
   - tasks:
-      - show-rss
-      - movies-rss
+      - imdb_watch_list
+      - add_releases
+      - download_movie_list
     schedule:
-      minute: 30
+      minute: 01
   - tasks:
-      - imdb-lookup
-    interval: 
-      hours: 2
+    - clean
+    schedule:
+      hour: 17 
 
 

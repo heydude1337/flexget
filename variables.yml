@@ -1,14 +1,23 @@
 trans:
   username: *
   password: *
-  adress: 192.168.0.5
-  port: 9091
+  adress: *
+#  port: 9091 
 imdb:
-  username: *
+  username: ur*
   userlist: watchlist
+#  min_rating: 6.2 # new releases only
+#  min_votes: 1000 # new releases only
 urls:
   rssfeed: http://showrss.info/user/78625.rss?magnets=true&namespaces=true&name=null&quality=null&re=null
+  imdb_releases: http://rss.imdb.com/list/ls016522954
 folder:
   downloads: /NAS/Downloads
   tvshows: /NAS/TV Shows
   movies: /NAS/Movies
+movies:
+#  min_size: 2500
+#  max_size: 12000
+  quality: 1080p+ !cam !2160p
+  rarbg_category: x264 1080p  # 44 = 720p, 45 = 1080p
+  
