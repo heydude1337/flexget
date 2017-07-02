@@ -109,9 +109,8 @@ schedules:
       - add_releases
       - download_movie_list
       - clean
-    schedule:
-      interval:
-        hours: 1
+    interval:
+      hours: 1
     
 
 
