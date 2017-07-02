@@ -29,7 +29,7 @@ templates:
     accept_all: yes
     # thetvdb_lookup: yes
     set:
-      path: "{{ series_name }}/{{ series_season|pad(2) }}"
+      path: "{? folder.tvshows ?}/{{ series_name }}/Season {{ series_season }}"
     exists_series: "{?  folder.tvshows  ?}"
     metainfo_series: yes
 
@@ -108,11 +108,11 @@ schedules:
       - imdb_watch_list
       - add_releases
       - download_movie_list
+      - clean
     schedule:
-      minute: 01
-  - tasks:
-    - clean
-    schedule:
-      hour: 17 
+      interval:
+        hours: 1
+    
+
 
 
