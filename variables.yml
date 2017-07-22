@@ -4,13 +4,13 @@ trans:
   adress: *
 #  port: 9091 
 imdb:
-  username: ur*
+  username: *
   userlist: watchlist
 #  min_rating: 6.2 # new releases only
 #  min_votes: 1000 # new releases only
 urls:
-  rssfeed: http://showrss.info/user/78625.rss?magnets=true&namespaces=true&name=null&quality=null&re=null
-  imdb_releases: http://rss.imdb.com/list/ls016522954
+  rssfeed: http://showrss.info/user/*
+  imdb_releases: http://rss.imdb.com/list/*
 folder:
   downloads: /NAS/Downloads
   tvshows: /NAS/TV Shows
