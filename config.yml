@@ -7,7 +7,7 @@ templates:
       entries:
         via:
           - pushbullet:
-              api_key: o.lP8dfxQxlnqGzCU1Uoh7lMHMRYGSzbXl
+              api_key: *
   torrent:
     transmission:
       host: "{? trans.adress ?}"
