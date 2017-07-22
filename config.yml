@@ -14,6 +14,10 @@ templates:
       port: 9091 # "{? trans.port ?}}"
       username: '{? trans.username ?}'
       password: '{? trans.password ?}'
+      main_file_only: Yes
+      main_file_ratio: 0.7
+      include_subs: Yes
+      rename_like_files: Yes
 
   clean_torrent:
     clean_transmission:
@@ -27,9 +31,10 @@ templates:
   showrss:
     rss: "{? urls.rssfeed ?}"
     accept_all: yes
-    # thetvdb_lookup: yes
+    thetvdb_lookup: yes
     set:
       path: "{? folder.tvshows ?}/{{ series_name }}/Season {{ series_season }}"
+      content_file_name: "{{tvdb_series_name|replace(' ', '.')}}.{{tvdb_ep_id}}"
     exists_series: "{?  folder.tvshows  ?}"
     metainfo_series: yes
 
@@ -109,6 +114,7 @@ schedules:
       - add_releases
       - download_movie_list
       - clean
+      - download_series
     interval:
       hours: 1
     
